@@ -1,23 +1,150 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>AR.js + A-Frame</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/AR.js/aframe/build/aframe-ar.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Story</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        #story-container {
+            margin-top: 50px;
+        }
+        .choice-button {
+            background-color: #333;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .choice-button:hover {
+            background-color: #444;
+        }
+        #title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs>
-        <!-- Marker -->
-        <a-marker preset="hiro">
-            <a-entity 
-                geometry="primitive: box; depth: 2; height: 2; width: 2"
-                material="color: red;">
-            </a-entity>
-        </a-marker>
+<body>
+    <div id="story-container">
+        <div id="title">The Bandits' Plot</div>
+        <div id="story"></div>
+        <div id="choices"></div>
+    </div>
 
-        <!-- Camera -->
-        <a-entity camera></a-entity>
-    </a-scene>
+    <script>
+        let storyIndex = 0;
+
+        const storyData = [
+            {
+                text: "You find yourself standing in front of the guild. The atmosphere is tense after the recent fight, but it seems like everything is calming down.",
+                choices: [
+                    { text: "Talk to Serea", nextIndex: 1 },
+                    { text: "Head out and explore", nextIndex: 2 }
+                ]
+            },
+            {
+                text: "Serea observes you, her eyes narrowing slightly as if processing the situation. 'You’re a trouble magnet, huh?' she says with a smile. 'Seems like you’ve got a knack for making things interesting.'",
+                choices: [
+                    { text: "Ask her about the mission", nextIndex: 3 },
+                    { text: "Ignore her and walk away", nextIndex: 4 }
+                ]
+            },
+            {
+                text: "You decide to head out and explore. As you walk down the road, a group of soldiers approach you. 'You seem new here,' one of them says.",
+                choices: [
+                    { text: "Tell them you're just passing through", nextIndex: 5 },
+                    { text: "Ask them about the village", nextIndex: 6 }
+                ]
+            },
+            {
+                text: "Serea seems to be evaluating you. 'Stay around for a bit. I think there’s more to you than you let on.' You’re left wondering if she’s genuinely interested or just curious.",
+                choices: [
+                    { text: "Thank her and stay", nextIndex: 7 },
+                    { text: "Leave the guild", nextIndex: 8 }
+                ]
+            },
+            {
+                text: "You ignore her comment and walk away, deciding to focus on your own plans. The guild atmosphere slowly returns to normal.",
+                choices: [
+                    { text: "Head to the village", nextIndex: 5 },
+                    { text: "Explore the town", nextIndex: 2 }
+                ]
+            },
+            {
+                text: "The soldiers give you a once-over. 'We don’t get many strangers here. What brings you?' they ask.",
+                choices: [
+                    { text: "Tell them you're just passing through", nextIndex: 6 },
+                    { text: "Ask them about the village’s security", nextIndex: 9 }
+                ]
+            },
+            {
+                text: "You ask about the village, and one of the soldiers, looking less guarded, tells you, 'It’s a peaceful place, but we’ve had some trouble with bandits. They’ve been getting bolder lately.'",
+                choices: [
+                    { text: "Thank them and head to the village", nextIndex: 7 },
+                    { text: "Ask about the bandits", nextIndex: 10 }
+                ]
+            },
+            {
+                text: "You decide to stay, not sure if you trust Serea just yet. The guild's mood feels more relaxed now.",
+                choices: [
+                    { text: "Chat with other patrons", nextIndex: 11 },
+                    { text: "Leave the guild and head out", nextIndex: 2 }
+                ]
+            },
+            {
+                text: "You leave the guild, but something still feels off. The night air is cool as you walk down the darkening street.",
+                choices: [
+                    { text: "Head back to your inn", nextIndex: 12 },
+                    { text: "Explore the town", nextIndex: 2 }
+                ]
+            },
+            {
+                text: "The soldiers seem to loosen up a little. 'We’ve had a few incidents lately,' one of them admits. 'But nothing we can't handle.'",
+                choices: [
+                    { text: "Ask about the bandits", nextIndex: 10 },
+                    { text: "Head back to your inn", nextIndex: 12 }
+                ]
+            },
+            {
+                text: "You overhear some of the soldiers talking about bandits and bribes, hinting that things might not be as peaceful as they seem. It seems like they’ve been paid off.",
+                choices: [
+                    { text: "Warn the village", nextIndex: 13 },
+                    { text: "Keep the information to yourself", nextIndex: 14 }
+                ]
+            }
+        ];
+
+        function renderStory() {
+            const storyElement = document.getElementById('story');
+            const choicesElement = document.getElementById('choices');
+            const currentStory = storyData[storyIndex];
+            
+            storyElement.textContent = currentStory.text;
+            choicesElement.innerHTML = '';
+
+            currentStory.choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.classList.add('choice-button');
+                button.textContent = choice.text;
+                button.onclick = () => {
+                    storyIndex = choice.nextIndex;
+                    renderStory();
+                };
+                choicesElement.appendChild(button);
+            });
+        }
+
+        renderStory();
+    </script>
 </body>
 </html>
